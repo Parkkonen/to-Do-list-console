@@ -74,16 +74,30 @@ int main()
 			id++;
 			break;
 		case Commands::Delete:
-			num = std::stoi(description);
-			iterator = taskList.begin() + num;
-			taskList.erase(iterator);
+			try {
+				num = std::stoi(description);
+				if (num >= 0 && num < taskList.size()) {
+					iterator = taskList.begin() + num;
+					taskList.erase(iterator);
+					std::cout << "Task with ID " << num << " deleted" << std::endl;
+				}
+				else {
+					std::cout << "Invalid ID: " << num << std::endl;
+				}
+			}
+			catch (const std::invalid_argument& e) {
+				std::cout << "Invalid input. Please enter a valid number." << std::endl;
+			}
+			catch (const std::out_of_range& e) {
+				std::cout << "Input out of range. Please enter a valid number." << std::endl;
+			}
 			break;
 		case Commands::DeleteAll:
 			id = 0;
 			taskList.clear();
 			break;
 		case Commands::Unknown:
-			std::cout << "Command not found \n";
+			std::cout << "Command not found" << std::endl;
 			break;
 		}
 	}
