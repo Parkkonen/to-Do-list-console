@@ -11,8 +11,29 @@ enum class Commands
 	Create,
 	Delete,
 	DeleteAll,
+	Help,
 	Unknown
 };
+
+struct CommandInfo {
+	std::string name;
+	std::string description;
+};
+
+std::vector<CommandInfo> commandInfoList = {
+	{"ShowAll", "Show all tasks"},
+	{"Create", "Create a new task"},
+	{"Delete", "Delete a task by ID"},
+	{"DeleteAll", "Delete all tasks"},
+	{"Help", "Show available commands"}
+};
+void help()
+{
+	for (auto command : commandInfoList)
+	{
+		std::cout << command.name << " " << command.description << std::endl;
+	}
+}
 
 std::vector<Task> taskList;
 // Prints out all tasks
@@ -33,6 +54,7 @@ Commands figureOutWhichCommand(const std::string& command) {
 		{"Create", Commands::Create},
 		{"Delete", Commands::Delete},
 		{"DeleteAll", Commands::DeleteAll},
+		{"Help", Commands::Help},
 		{"Unknown", Commands::Unknown}
 	};
 
@@ -58,10 +80,10 @@ int main()
 		std::vector<Task>::iterator iterator;
 		std::getline(std::cin, input);
 		std::istringstream iss(input);
-		
+
 		iss >> command;
 		iss >> description;
-		
+
 		Task task(input, description, id);
 		switch (figureOutWhichCommand(command))
 		{
@@ -95,6 +117,9 @@ int main()
 		case Commands::DeleteAll:
 			id = 0;
 			taskList.clear();
+			break;
+		case Commands::Help:
+			help();
 			break;
 		case Commands::Unknown:
 			std::cout << "Command not found" << std::endl;
