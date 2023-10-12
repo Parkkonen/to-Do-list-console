@@ -5,7 +5,7 @@
 class Task {
 public:
 	Task(const std::string& name, const std::string& description, const int& id)
-		: name(name), description(description), id(id) {
+		: name(name), id(id) {
 	}
 	std::string getName() const {
 		return name;

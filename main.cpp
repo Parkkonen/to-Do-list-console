@@ -1,35 +1,91 @@
 #include <iostream>
 #include <vector>
+#include <sstream>
+#include <map>
+
 #include "manageList.h"
 
+enum class Commands
+{
+	ShowAll,
+	Create,
+	Delete,
+	DeleteAll,
+	Unknown
+};
+
+std::vector<Task> taskList;
 // Prints out all tasks
-void listAll(std::vector<Task> taskList)
+void listAll()
 {
 	// Iterate through all tasks in the list
 	for (auto task : taskList)
 	{
-		std::cout << "Description: " << task.getDescription() << std::endl;
 		std::cout << "ID: " << task.getId() << std::endl;
 		std::cout << "Name: " << task.getName() << std::endl;
+		std::cout << "Description: " << task.getDescription() << std::endl;
+	}
+}
+
+Commands figureOutWhichCommand(const std::string& command) {
+	std::map<std::string, Commands> stringToEnumMap = {
+		{"ShowAll", Commands::ShowAll},
+		{"Create", Commands::Create},
+		{"Delete", Commands::Delete},
+		{"DeleteAll", Commands::DeleteAll},
+		{"Unknown", Commands::Unknown}
+	};
+
+	auto it = stringToEnumMap.find(command);
+	if (it != stringToEnumMap.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		return Commands::Unknown;
 	}
 }
 
 int main()
 {
-	std::vector<Task> taskList;
 	int id{ 0 };
 	for (;;)
 	{
 		std::cout << "Create a task by writing its name:\n";
-		std::string input, description;
+		std::string command, input, description;
+		int num;
+		std::vector<Task>::iterator iterator;
 		std::getline(std::cin, input);
-		std::string token = input.substr(0, input.find(" "));
-		std::cout << "TOKEN: " << token << std::endl;
-		//system("CLS");
+		std::istringstream iss(input);
+		
+		iss >> command;
+		iss >> description;
+		
 		Task task(input, description, id);
-		taskList.push_back(task);
-		id++;
-		listAll(taskList);
+		switch (figureOutWhichCommand(command))
+		{
+		case Commands::ShowAll:
+			system("CLS");
+			listAll();
+			break;
+		case Commands::Create:
+			taskList.push_back(task);
+			id++;
+			break;
+		case Commands::Delete:
+			num = std::stoi(description);
+			iterator = taskList.begin() + num;
+			taskList.erase(iterator);
+			break;
+		case Commands::DeleteAll:
+			id = 0;
+			taskList.clear();
+			break;
+		case Commands::Unknown:
+			std::cout << "Command not found \n";
+			break;
+		}
 	}
 	return 0;
 }
